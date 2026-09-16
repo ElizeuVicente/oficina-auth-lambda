@@ -1,0 +1,19 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: oficina-auth
+  namespace: oficina
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "0"
+        autoscaling.knative.dev/max-scale: "3"
+    spec:
+      containers:
+        - image: ghcr.io/elizeuvicente/oficina-auth-lambda:${IMAGE_TAG}
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SECURITY_JWT_SECRET
+              valueFrom: { secretKeyRef: { name: oficina-auth, key: jwt-secret } }
