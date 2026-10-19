@@ -30,6 +30,12 @@ resource "aws_lambda_function" "cpf" {
   }
 
   depends_on = [aws_cloudwatch_log_group.lambda]
+
+  # O Terraform cria a infraestrutura; cada branch publica seu código na
+  # própria Lambda. Evita que o apply de main sobrescreva homologação.
+  lifecycle {
+    ignore_changes = [filename, source_code_hash]
+  }
 }
 
 resource "aws_cloudwatch_log_group" "authorizer" {
@@ -52,6 +58,10 @@ resource "aws_lambda_function" "authorizer" {
     variables = { SECURITY_JWT_SECRET = var.jwt_secrets[each.key] }
   }
   depends_on = [aws_cloudwatch_log_group.authorizer]
+
+  lifecycle {
+    ignore_changes = [filename, source_code_hash]
+  }
 }
 
 resource "aws_apigatewayv2_api" "oficina" {
