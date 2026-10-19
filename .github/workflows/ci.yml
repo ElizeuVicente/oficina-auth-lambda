@@ -8,3 +8,10 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17', cache: maven }
       - run: mvn --batch-mode verify
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive
+      - name: Validate Lambda/API Gateway Terraform without provisioning
+        working-directory: aws
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
