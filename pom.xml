@@ -28,6 +28,9 @@
         </excludes></filter></filters>
       </configuration></execution></executions>
     </plugin>
-    <plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin>
+    <!-- Mantem o JAR principal plano para o shade; o executavel Spring fica em -exec.jar. -->
+    <plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId>
+      <configuration><classifier>exec</classifier></configuration>
+    </plugin>
   </plugins></build>
 </project>

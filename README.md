@@ -12,7 +12,7 @@ Function Serverless de autenticação por CPF. O servidor Spring Boot continua d
 mvn verify
 ```
 
-O build gera `target/oficina-auth-lambda-0.1.0-SNAPSHOT-lambda.jar` (JAR sombreado de aproximadamente 23 MB). Ele contém o handler `com.oficina.auth.CpfLambdaHandler::handleRequest` e o driver PostgreSQL. Os testes cobrem CPF ativo/inativo/inválido e o formato de resposta do handler. O handler não inicia Spring Boot: lê o evento HTTP API v2, consulta PostgreSQL privado e emite JWT. CPF e token não são registrados em logs de erro.
+O build gera `target/oficina-auth-lambda-0.1.0-SNAPSHOT-lambda.jar` (JAR sombreado de aproximadamente 23 MB). As classes dos handlers ficam na raiz do JAR, como exige o runtime Java da Lambda; o executável Spring para desenvolvimento local é gerado separadamente com classificador `exec`. CI e deploy verificam a presença de ambas as classes no pacote, impedindo regressão para layout `BOOT-INF`. O JAR contém o driver PostgreSQL. Os testes cobrem CPF ativo/inativo/inválido e o formato de resposta do handler. O handler não inicia Spring Boot: lê o evento HTTP API v2, consulta PostgreSQL privado e emite JWT. CPF e token não são registrados em logs de erro.
 
 Com a API e o PostgreSQL locais ativos, execute na porta `8081` e use `POST /auth/cpf` com `{"cpf":"529.982.247-25"}`. Defina `SECURITY_JWT_SECRET` com pelo menos 32 caracteres; ela deve ser igual à secret da API.
 

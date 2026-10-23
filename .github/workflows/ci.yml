@@ -8,6 +8,12 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17', cache: maven }
       - run: mvn --batch-mode verify
+      - name: Validar classes dos handlers na raiz do JAR Lambda
+        run: |
+          artifact="$(find target -maxdepth 1 -name '*-lambda.jar' -print -quit)"
+          test -s "$artifact"
+          jar tf "$artifact" | grep -Fx 'com/oficina/auth/CpfLambdaHandler.class'
+          jar tf "$artifact" | grep -Fx 'com/oficina/auth/JwtAuthorizerHandler.class'
       - uses: hashicorp/setup-terraform@v3
       - run: terraform fmt -check -recursive
       - name: Validate Lambda/API Gateway Terraform without provisioning
