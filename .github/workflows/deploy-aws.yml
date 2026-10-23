@@ -25,6 +25,12 @@ jobs:
         with: { distribution: temurin, java-version: '17', cache: maven }
       - uses: hashicorp/setup-terraform@v3
       - run: mvn --batch-mode verify
+      - name: Validar pacote Lambda
+        run: |
+          artifact="$(find target -maxdepth 1 -name '*-lambda.jar' -print -quit)"
+          test -s "$artifact"
+          jar tf "$artifact" | grep -Fx 'com/oficina/auth/CpfLambdaHandler.class'
+          jar tf "$artifact" | grep -Fx 'com/oficina/auth/JwtAuthorizerHandler.class'
       - name: Exigir entradas
         run: |
           for name in TF_VAR_lambda_role_arn TF_VAR_private_subnet_ids TF_VAR_vpc_id TF_VAR_lambda_security_group_id TF_VAR_db_endpoint TF_VAR_backend_listener_arn TF_VAR_db_password TF_VAR_jwt_secrets TF_STATE_BUCKET; do
@@ -66,6 +72,12 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17', cache: maven }
       - run: mvn --batch-mode verify
+      - name: Validar pacote Lambda
+        run: |
+          artifact="$(find target -maxdepth 1 -name '*-lambda.jar' -print -quit)"
+          test -s "$artifact"
+          jar tf "$artifact" | grep -Fx 'com/oficina/auth/CpfLambdaHandler.class'
+          jar tf "$artifact" | grep -Fx 'com/oficina/auth/JwtAuthorizerHandler.class'
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
